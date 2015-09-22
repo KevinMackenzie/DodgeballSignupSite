@@ -1,16 +1,26 @@
 <?php
-include('lock.php');
+include('Lock.php');
 
-//switch depending on which button is pressed for account deletion and signing out
 if($_SERVER["REQUEST_METHOD"] == "POST")
 {
+	if(isset($_POST['btnApply']))
+	{
+		$TeamMembers=implode(',', array($_POST['Player1'], $_POST['Player2'], $_POST['Player3'], $_POST['Player4'], $_POST['Player5'], $_POST['Player6']);
 
-//TODO: overwrite team information in database
-
-$TeamMembers=implode(',', array($_POST['Player1'], $_POST['Player2'], $_POST['Player3'], $_POST['Player4'], $_POST['Player5'], $_POST['Player6']);
-
-$sql='update TEAMS set TEAM_NAME=$TeamName,TEAM_MEMBERS=$TeamMembers where TEAM_NUMBER=$login_session;'
-$result=mysqli_query($db,$sql);
+		$sql="update TeamInfo set TeamName=$TeamName,Player1='$_POST['Player1']',Player2='$_POST['Player2']',Player3='$_POST['Player3']',Player4=$_POST['Player4']',Player5='$_POST['Player5']',Player6='$_POST['Player6']' where TeamID=$login_session;"
+		$result=mysqli_query($Teamdb,$sql);
+				
+	}
+	else if(isset($_POST['btnSignOut']))
+	{
+		header("Location: SignOut.php");
+	}
+	else if(isset($_POST['btnDelete']))
+	{
+		$sql="DELETE FROM TeamInfo WHERE TeamID='$login_session';";
+		$result=mysql_query($Teamdb, $sql);
+		header("Location: Login.php");
+	}
 
 header("Location: Home.php");
 
@@ -19,19 +29,27 @@ else
 {
 
 //TODO: retrieve names from the team list
-$sql = 'select TEAM_MEMBERS,TEAM_NAME from TEAMS where TEAM_NUMBER=$login_session;'
-$result=mysqli_query($db,$sql);
+$sql = "select Player1,Player2,Player3,Player4,Player5,Player6,TeamName from TeamInfo where TeamID='$login_session';"
+$result=mysqli_query($Teamdb,$sql);
 $row=mysqli_fetch_array($result,MYSQLI_ASSOC);
 
-$TeamName=$row['TEAM_NAME'];
-$TeamMembers=explode(',', $row['TEAM_MEMBERS']);
+$count=mysqli_num_rows($result);
 
-$player1=$TeamMembers[0];
-$player2=$TeamMembers[1];
-$player3=$TeamMembers[2];
-$player4=$TeamMembers[3];
-$player5=$TeamMembers[4];
-$player6=$TeamMembers[5];
+if($count == 0)
+{
+	echo 'Error Retrieving Account Data';
+}
+else
+{
+	$TeamName=$row['TeamName'];
+
+	$player1=$row['player1'];
+	$player2=$row['player2'];
+	$player3=$row['player3'];
+	$player4=$row['player4'];
+	$player5=$row['player5'];
+	$player6=$row['player6'];
+}
 }
 ?>
 <body>
@@ -71,9 +89,9 @@ $player6=$TeamMembers[5];
     <td><input type="text" name="Player6" <?php echo 'text="$player6"'?>/></td>
   </tr>
 </table> 
-<input type="submit" value=" Apply Changes "/><br />
+<input type="submit" name=="btnApply" value=" Apply Changes "/><br />
+<input type="submit" name=="btnSignOut" value=" Sign Out "/><br />
+<input type="submit" name=="btnDelete" value=" Delete Team Application "/><br />
 </form>
 </p>
-<input type="submit" value=" Sign Out "/><br />
-<input type="submit" value=" Delete Team Application "/><br />
 </body>

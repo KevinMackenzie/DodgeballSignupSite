@@ -2,14 +2,24 @@
 
 if($_SERVER["REQUEST_METHOD"] == "POST")
 {
-//TODO: create new account and add the data
-$sql=''
+	
+$password=password_hash($_POST['pw']);
+$sql="INSERT INTO TeamLogin(Password) VALUES('$password');"
+
+$result=mysqli_query($Logindb,$sql);
+
+$sql="SELECT TeamID FROM TeamLogin WHERE Password='$password';"
+
+$result=mysqli_query($Logindb,$sql);
+$row=mysqli_fetch_array($result,MYSQLI_ASSOC);
+
+$teamId=row['TeamID'];
 
 if($noErrors == true)
 {
 
-session_register("myusername");
-$_SESSION['login_user']=$myusername;
+session_register("teamId");
+$_SESSION['login_user']=$teamId;
 
 header("location: Home.php");
 }
@@ -24,7 +34,7 @@ header("location: Home.php");
 <?php
 if($noErrors == false)
 {
-echo '<h2><font color="red">One or More Errors Found</font></h2>';
+echo '<h2><font color="red">One or More Errors Occured</font></h2>';
 }
 ?>
 
