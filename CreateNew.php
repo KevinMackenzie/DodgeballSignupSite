@@ -1,5 +1,5 @@
 <?php
-
+include('cfg.php');
 if($_SERVER["REQUEST_METHOD"] == "POST")
 {
 	
@@ -22,6 +22,7 @@ session_register("teamId");
 $_SESSION['login_user']=$teamId;
 
 header("location: Home.php");
+die();
 }
 }
 

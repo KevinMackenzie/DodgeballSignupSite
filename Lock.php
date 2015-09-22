@@ -12,5 +12,6 @@ $login_session=$row['TeamID'];
 if(!isset($login_session))
 {
 header("Location: Login.php");
+die();
 }
 ?>
