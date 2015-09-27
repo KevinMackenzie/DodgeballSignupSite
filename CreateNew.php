@@ -11,7 +11,7 @@ echo '<h2><font color="red">One or More Errors Occured</font></h2>';
 }
 ?>
 
-</form action="" method="POST">
+<form action="" method="POST">
 <table>
 
 	<tr>
