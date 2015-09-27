@@ -1,31 +1,36 @@
 <?php
-include('cfg.php');
-if($_SERVER["REQUEST_METHOD"] == "POST")
+$noErrors=true;
+
+if($_SERVER["REQUEST_METHOD"] === "POST")
 {
+if(isset($_POST['btnSubmit']))
+{
+include("TeamInfoTools.php");
 	
 $password=password_hash($_POST['pw']);
-$sql="INSERT INTO TeamLogin(Password) VALUES('$password');"
+$sql="INSERT INTO TeamLogin(Password) VALUES(' . $password . ');";
 
 $result=mysqli_query($Logindb,$sql);
 
-$sql="SELECT TeamID FROM TeamLogin WHERE Password='$password';"
+$sql="SELECT TeamID FROM TeamLogin WHERE Password='$password';";
 
 $result=mysqli_query($Logindb,$sql);
 $row=mysqli_fetch_array($result,MYSQLI_ASSOC);
 
-$teamId=row['TeamID'];
+$teamId=$row['TeamID'];
+
+$noErrors=CreateTeamInfoRow(array($_POST["Player1"],$_POST["Player2"],$_POST["Player3"],$_POST["Player4"],$_POST["Player5"],$_POST["Player6"]), $_POST["TeamName"], $TeamID);
 
 if($noErrors == true)
 {
 
-session_register("teamId");
 $_SESSION['login_user']=$teamId;
 
 header("location: Home.php");
 die();
 }
 }
-
+}
 ?>
 
 <body>
@@ -33,10 +38,10 @@ die();
 <h1>Team Dodgeball Signup</h1>
 
 <?php
-if($noErrors == false)
+/*if($noErrors == false)
 {
 echo '<h2><font color="red">One or More Errors Occured</font></h2>';
-}
+}*/
 ?>
 
 <form action="" method="POST">
@@ -80,7 +85,7 @@ echo '<h2><font color="red">One or More Errors Occured</font></h2>';
 	</tr>
 </table>
 
-<input type="submit" text="Submit Team Signup"/>
+<input type="submit" name='btnSubmit' text="Submit Team Signup"/>
 </form>
 
 </body>
