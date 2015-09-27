@@ -1,32 +1,4 @@
-<?php
-include('cfg.php');
-if($_SERVER["REQUEST_METHOD"] == "POST")
-{
-	
-$password=password_hash($_POST['pw']);
-$sql="INSERT INTO TeamLogin(Password) VALUES('$password');"
 
-$result=mysqli_query($Logindb,$sql);
-
-$sql="SELECT TeamID FROM TeamLogin WHERE Password='$password';"
-
-$result=mysqli_query($Logindb,$sql);
-$row=mysqli_fetch_array($result,MYSQLI_ASSOC);
-
-$teamId=row['TeamID'];
-
-if($noErrors == true)
-{
-
-session_register("teamId");
-$_SESSION['login_user']=$teamId;
-
-header("location: Home.php");
-die();
-}
-}
-
-?>
 
 <body>
 
