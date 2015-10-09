@@ -1,0 +1,3 @@
+$noErrors=CreateTeamInfoRow(array($_POST["Player1"],$_POST["Player2"],$_POST["Player3"],$_POST["Player4"],$_POST["Player5"],$_POST["Player6"]), $_POST["ContactInfo"], array($_POST["EmContactName1"],$_POST["EmContactName2"],$_POST["EmContactName3"],$_POST["EmContactName4"],$_POST["EmContactName5"],$_POST["EmContactName6"],$_POST["EmContactName7"]), array($_POST["EmContactInfo1"],$_POST["EmContactInfo2"],$_POST["EmContactInfo3"],$_POST["EmContactInfo4"],$_POST["EmContactInfo5"],$_POST["EmContactInfo6"],$_POST["EmContactInfo7"]), $_POST["TeamName"],$TeamID);
+
+

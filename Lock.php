@@ -1,17 +1,27 @@
 <?php
-include('cfg.php');
+include 'cfg.php';
+
 session_start();
-$user_check=$_SESSION['teamId'];
+$user_check=$_SESSION['TeamID'];
 
-$ses_sql=mysqli_query($db,"select TEAM_NUMBER from TeamLogin where TEAM_NUMBER='$user_check' ");
 
-$row=mysqli_fetch_array($ses_sql,MYSQLI_ASSOC);
+$sql="SELECT TeamID FROM TeamLogin WHERE TeamID='$user_check';";
+if($TeamNumberRes = $Logindb->query($sql))
+{
 
-$login_session=$row['TeamID'];
-
-if(!isset($login_session))
+if($TeamNumberRes == false)
 {
 header("Location: Login.php");
-die();
 }
+
+$row=$TeamNumberRes->fetch_assoc();
+
+$TeamNumber=$row['TeamID'];
+$TeamID=$TeamNumber;
+if(!isset($TeamNumber))
+{
+header("Location: Login.php");
+}
+}
+
 ?>

@@ -1,5 +1,6 @@
 <?php
-include("cfg.php");
+include 'cfg.php';
+
 session_start();
 if($_SERVER["REQUEST_METHOD"] == "POST")
 {
@@ -12,21 +13,20 @@ die();
 else
 {
 // username and password sent from Form
-$myusername=mysqli_real_escape_string($db,$_POST['username']);
-$mypassword=mysqli_real_escape_string($db,$_POST['password']);
+$myusername=$_POST['username'];
+$mypassword=$_POST['password'];
 
-$sql="SELECT Password FROM TeamLogin WHERE TeamID='$myusername';";
-$result=mysqli_query($Logindb,$sql);
-$row=mysqli_fetch_array($result,MYSQLI_ASSOC);
+$sql="SELECT Password,TeamID FROM TeamLogin WHERE TeamID='$myusername';";
+$result=$Logindb->query($sql);
+$row=$result->fetch_assoc();
 //$active=$row['active'];
-$count=mysqli_num_rows($result);
+$count=$result->num_rows;
 
 if($count==1)
 {
-	if(password_verify($mypassword, mysqli_fetch_row($result)['Password']))
+	if(password_verify($mypassword, $row['Password']))
 	{
-		session_register("myusername");
-		$_SESSION['login_user']=$myusername;
+		$_SESSION['TeamID']=$row['TeamID'];
 
 		header("location: Home.php");
 	}	
@@ -39,6 +39,21 @@ $error="Your Login ID or Password is Invalid";
 }
 }
 ?>
+<html>
+<body>
+
+<h1>Welcome to the 2015 Class of 2017 Dodgeball Fundraser</h2><br><br><br>
+
+<?php
+
+global $error;
+if(isset($error))
+{
+echo "<h2><font color=\"red\"> " . $error . "</font></h2>";
+}
+
+?>
+
 <form action="" method="post">
 <label>Team ID# :</label>
 <input type="text" name="username"/><br />
@@ -47,3 +62,5 @@ $error="Your Login ID or Password is Invalid";
 <input type="submit" value=" Submit "/><br />
 <input type="submit" name="NewAccount" value=" Create New Team "/><br />
 </form>
+</body>
+</html>

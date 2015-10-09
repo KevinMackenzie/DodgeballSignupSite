@@ -1,91 +1,94 @@
 <?php
-$noErrors=true;
+include 'cfg.php';
+include 'TeamInfoTools.php';
 
 if($_SERVER["REQUEST_METHOD"] === "POST")
 {
 if(isset($_POST['btnSubmit']))
 {
-include("TeamInfoTools.php");
-	
-$password=password_hash($_POST['pw']);
-$sql="INSERT INTO TeamLogin(Password) VALUES(' . $password . ');";
 
-$result=mysqli_query($Logindb,$sql);
+global $Errors;
+//still check for errors here as a last resort
+//$Errors = VerifyTeamInfoPost($_POST);
 
-$sql="SELECT TeamID FROM TeamLogin WHERE Password='$password';";
+if(count($Errors) == 0)
+{	
 
-$result=mysqli_query($Logindb,$sql);
-$row=mysqli_fetch_array($result,MYSQLI_ASSOC);
+$password=password_hash($_POST['pw'], PASSWORD_BCRYPT);
+$sql=sprintf("INSERT INTO TeamLogin(Password) VALUES('%s');", $password);
 
-$teamId=$row['TeamID'];
+$result=$Logindb->query($sql);
 
-$noErrors=CreateTeamInfoRow(array($_POST["Player1"],$_POST["Player2"],$_POST["Player3"],$_POST["Player4"],$_POST["Player5"],$_POST["Player6"]), $_POST["TeamName"], $TeamID);
+if($result == FALSE)
+{
+	$noErrors = false;
+}
+
+$sql=sprintf("SELECT TeamID FROM TeamLogin WHERE Password='%s';", $password);
+
+
+if($result = $Logindb->query($sql))
+{
+
+$row=$result->fetch_assoc();
+
+$TeamID=$row['TeamID'];
+
+$noErrors=CreateTeamInfoRowPost($_POST,$TeamID);
+
+}
+
+
 
 if($noErrors == true)
 {
-
-$_SESSION['login_user']=$teamId;
+session_start();
+$_SESSION['TeamID']=$TeamID;
 
 header("location: Home.php");
 die();
 }
 }
-}
-?>
 
+}
+}
+
+?>
+<html>
 <body>
 
 <h1>Team Dodgeball Signup</h1>
 
+
+<form id="TeamEditor" action="" method="POST">
 <?php
-/*if($noErrors == false)
+
+global $Errors;
+
+if(isset($Errors) && count($Errors) > 0)
 {
-echo '<h2><font color="red">One or More Errors Occured</font></h2>';
-}*/
+echo "<h2><font color=\"red\">Errors Occured; form data was unable to be saved</font></h2>";
+}
+
+for($x=0;$x<count($Errors);$x++)
+{
+global $Errors;
+echo $Errors[$x];
+echo "<br>";
+}
+
+
+include 'TeamEditor.php';
+
+DisplayTeamForm(true);
 ?>
 
-<form action="" method="POST">
-<table>
+<script src="ParseInput.js"></script>
+<script src="DisplayErrors.js"></script>
 
-	<tr>
-		<td>Team Name</td>
-		<td><input type="text" name="TeamName"/></td>
-	</tr>
-	<tr>
-		<td>Team Password</td>
-		<td><input type="password" name="pw"/></td>
-	</tr>
-</table>
-
-<h1>Team Members</h1>
-<table>
-	<tr>
-		<td>Players</td>
-		<td><input type="text" name="Player1"/></td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><input type="text" name="Player2"/></td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><input type="text" name="Player3"/></td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><input type="text" name="Player4"/></td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><input type="text" name="Player5"/></td>
-	</tr>
-	<tr>
-		<td></td>
-		<td><input type="text" name="Player6"/></td>
-	</tr>
-</table>
-
-<input type="submit" name='btnSubmit' text="Submit Team Signup"/>
+<input type="checkbox" id="license">I Accept the <a href="Rules.html">Terms of Application and Play</a></input>
+<button name='btnSubmit' onclick="ParseInput(true,true); return false;" >Submit Team Signup</button>
 </form>
 
 </body>
+</html>
