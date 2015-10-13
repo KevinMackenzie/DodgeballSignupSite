@@ -4,6 +4,10 @@ include 'cfg.php';
 session_start();
 $user_check=$_SESSION['TeamID'];
 
+if(!isset($user_check))
+{
+header("Location: Login.php");
+}
 
 $sql="SELECT TeamID FROM TeamLogin WHERE TeamID='$user_check';";
 if($TeamNumberRes = $Logindb->query($sql))
