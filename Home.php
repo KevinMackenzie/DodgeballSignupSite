@@ -96,7 +96,7 @@ else
 ?>
 <html>
 <body>
-<h1>Welcome <?php echo $TeamNumber; ?></h1>
+<h1>Welcome Team #<?php echo $TeamNumber; ?></h1>
 
 <form id="TeamEditor" method="POST" action="">
 
